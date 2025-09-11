@@ -53,10 +53,10 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     if (title === 'Settings') {
       router.push('/(home)/settings');
     } else if (title === 'Contact Us / Request Coach') {
-      router.push('/(home)/contact-us');
+      router.push('/(home)/contact');
     } else {
-      console.log(`Navigate to: ${title}`);
-    }
+        console.log(`Navigate to: ${title}`);
+        }
   };
 
   const handleLogout = () => {

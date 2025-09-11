@@ -16,7 +16,7 @@ export default function HomeLayout() {
       <Stack.Screen name="my-completed-100" />
       <Stack.Screen name="settings" />
       <Stack.Screen name="change-password" />
-      <Stack.Screen name="contact-us" />
+      <Stack.Screen name="contact" />
     </Stack>
   );
 }
