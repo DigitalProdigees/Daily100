@@ -1,102 +1,397 @@
-import { Image } from 'expo-image';
+import Drawer from '@/components/Drawer';
 import { router } from 'expo-router';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import React, { useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-  const colorScheme = useColorScheme();
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const handleMenuPress = () => {
+    setDrawerVisible(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setDrawerVisible(false);
+  };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome to MYDaily100!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Quick Actions</ThemedText>
-        <View style={styles.quickActions}>
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}
-            onPress={() => router.push('/(home)/profile')}
-          >
-            <IconSymbol name="person.circle" size={24} color={Colors[colorScheme ?? 'light'].tint} />
-            <ThemedText style={styles.actionText}>Profile</ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}
-            onPress={() => router.push('/(home)/settings')}
-          >
-            <IconSymbol name="gearshape" size={24} color={Colors[colorScheme ?? 'light'].tint} />
-            <ThemedText style={styles.actionText}>Settings</ThemedText>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.menuButton} onPress={handleMenuPress}>
+          <Image
+            source={require('@/assets/images/menu.png')}
+            style={styles.menuIcon}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.bellButton}>
+          <Image
+            source={require('@/assets/images/bell.png')}
+            style={styles.bellIcon}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Scrollable Content */}
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Your Goals Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Your Goals</Text>
+          <TouchableOpacity style={styles.goalCard}>
+            <Image
+              source={require('@/assets/images/2.png')}
+              style={styles.goalCardBackground}
+              resizeMode="cover"
+            />
+            <View style={styles.goalCardOverlay}>
+              <Text style={styles.goalCategory}>Wealth</Text>
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBarContainer}>
+                  <View style={styles.progressBar}>
+                    <View style={styles.progressFill} />
+                  </View>
+                  <Text style={styles.progressPercentage}>10%</Text>
+                </View>
+                <Text style={styles.progressLabel}>Goal Progress</Text>
+
+              </View>
+            </View>
           </TouchableOpacity>
         </View>
-      </ThemedView>
 
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Your Daily Habits</ThemedText>
-        <ThemedText>
-          Track your progress and build better habits one day at a time. 
-          Use the Explore tab to discover new habits and track your journey.
-        </ThemedText>
-      </ThemedView>
-      
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Getting Started</ThemedText>
-        <ThemedText>
-          {`Welcome to your habit tracking journey! Start by exploring the app and setting up your first habit.`}
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* Your Assessment Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Your Assessment</Text>
+            <TouchableOpacity>
+              <Text style={styles.viewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.assessmentList}>
+            <View style={styles.assessmentItem}>
+              <View style={styles.assessmentContent}>
+                <Text style={styles.assessmentName}>Assessment Name</Text>
+                <Text style={styles.todoCount}>8 To-Do</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.viewText}>View</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.assessmentItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.assessmentImage}
+                resizeMode='contain'
+              />
+              <View style={styles.assessmentContent}>
+                <Text style={styles.assessmentName}>Assessment Name</Text>
+                <Text style={styles.todoCount}>8 To-Do</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.viewText}>View</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.assessmentItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.assessmentImage}
+                resizeMode="cover"
+              />
+              <View style={styles.assessmentContent}>
+                <Text style={styles.assessmentName}>Assessment Name</Text>
+                <Text style={styles.todoCount}>8 To-Do</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.viewText}>View</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* My Completed 100 Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>My Completed 100</Text>
+            <TouchableOpacity onPress={() => router.push('/(home)/my-completed-100')}>
+              <Text style={styles.viewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.completedList}>
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.completedItem}>
+              <Image
+                source={require('@/assets/images/ellipse.png')}
+                style={styles.completedImage}
+                resizeMode="cover"
+              />
+              <View style={styles.completedContent}>
+                <Text style={styles.completedName}>My Completed 100</Text>
+                <Text style={styles.finishedText}>Finished</Text>
+              </View>
+              <TouchableOpacity>
+                <Text style={styles.downloadText}>Download</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Drawer */}
+      <Drawer visible={drawerVisible} onClose={handleCloseDrawer} />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
   },
-  stepContainer: {
-    gap: 8,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+marginHorizontal:12,   
+ paddingVertical: 16,
+  },
+  menuButton: {
+    padding: 8,
+  },
+  menuIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#333333',
+  },
+  bellButton: {
+    padding: 8,
+  },
+  bellIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#D11A38',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    marginHorizontal: 16,
+    paddingBottom: 20,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  quickActions: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+  sectionTitle: {
+    fontSize: 24,
+    color: '#595959',
+    fontWeight:600
   },
-  actionButton: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
+  viewAllText: {
+    fontSize: 16,
+    color: '#D11A38',
+    fontWeight: 500,
+  },
+  goalCard: {
+    height: 200,
+    borderRadius: 36,
+    overflow:'hidden'
+  },
+  goalCardBackground: {
+    width: '100%',
+    height: '110%',
+  },
+  goalCardOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    paddingHorizontal: 20,
   },
-  actionText: {
-    fontSize: 14,
+  goalCategory: {
+    fontSize: 32,
+    fontWeight: '500',
+    color: '#333333',
+    marginBottom: 20,
+  },
+  progressContainer: {
+    width: '100%',
+  },
+  progressLabel: {
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 8,
+  },
+  progressBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressBar: {
+    flex: 1,
+    height: 8,
+    backgroundColor: '#FFB3BA',
+    borderRadius: 4,
+    marginRight: 12,
+  },
+  progressFill: {
+    width: '10%',
+    height: '100%',
+    backgroundColor: '#D11A38',
+    borderRadius: 4,
+  },
+  progressPercentage: {
+    fontSize: 16,
+    color: '#333333',
     fontWeight: '500',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  assessmentList: {
+    gap: 10
+  },
+  assessmentItem: {
+    flexDirection: 'row',
+  },
+  assessmentImage: {
+    width: 50,
+    height: 50,
+    borderRadius:35,
+  marginLeft:-12
+    
+  },
+  assessmentContent: {
+    flex: 1,
+  },
+  assessmentName: {
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 4,
+  },
+  todoCount: {
+    fontSize: 14,
+    color: '#D11A38',
+  },
+  viewText: {
+    fontSize: 14,
+    color: '#D11A38',
+    fontWeight: '500',
+  },
+  completedList: {
+  
+  },
+  completedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  completedImage: {
+    width: 50,
+    height: 50,
+    marginLeft:-12
+  },
+  completedContent: {
+    flex: 1,
+  },
+  completedName: {
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 4,
+  },
+  finishedText: {
+    fontSize: 14,
+    color: '#D11A38',
+    fontWeight: '500',
+  },
+  downloadText: {
+    fontSize: 14,
+    color: '#D11A38',
+    fontWeight: '500',
   },
 });

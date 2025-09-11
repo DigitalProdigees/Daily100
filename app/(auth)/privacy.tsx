@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function PrivacyScreen() {
   const handleAgree = () => {
-    router.replace('/(home)/(tabs)');
+    router.replace('/(home)/profile-information');
   };
 
   return (

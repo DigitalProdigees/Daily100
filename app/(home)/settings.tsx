@@ -1,235 +1,146 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import BackButtonWithText from '@/components/BackButtonWithText';
+import CenteredTitle from '@/components/CenteredTitle';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
-  const colorScheme = useColorScheme();
-
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Logout', 
-          style: 'destructive',
-          onPress: () => router.replace('/(auth)/login')
-        }
-      ]
-    );
-  };
-
-  const settingsSections = [
+  const settingsOptions = [
     {
-      title: 'General',
-      items: [
-        { icon: 'bell', title: 'Notifications', type: 'toggle', value: true },
-        { icon: 'moon', title: 'Dark Mode', type: 'toggle', value: colorScheme === 'dark' },
-        { icon: 'globe', title: 'Language', type: 'arrow', value: 'English' },
-      ]
+      id: 1,
+      title: 'Subscriptions',
+      icon: require('@/assets/images/wallet.png'),
     },
     {
-      title: 'Privacy',
-      items: [
-        { icon: 'lock', title: 'Privacy Policy', type: 'arrow' },
-        { icon: 'doc.text', title: 'Terms of Service', type: 'arrow' },
-        { icon: 'trash', title: 'Delete Account', type: 'arrow', destructive: true },
-      ]
+      id: 2,
+      title: 'Notification Settings',
+      icon: require('@/assets/images/bell.png'),
     },
     {
-      title: 'Support',
-      items: [
-        { icon: 'questionmark.circle', title: 'Help Center', type: 'arrow' },
-        { icon: 'envelope', title: 'Contact Us', type: 'arrow' },
-        { icon: 'star', title: 'Rate App', type: 'arrow' },
-      ]
-    }
+      id: 3,
+      title: 'Change Password',
+      icon: require('@/assets/images/privacy.png'),
+    },
   ];
 
-  return (
-    <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Image 
-              source={require('@/assets/images/backB.png')} 
-              style={styles.backButtonImage}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <ThemedText type="title" style={styles.title}>Settings</ThemedText>
-          <View style={styles.placeholder} />
-        </View>
+  const handleOptionPress = (title: string) => {
+    if (title === 'Change Password') {
+      router.push('/(home)/change-password');
+    } else {
+      console.log(`Navigate to: ${title}`);
+    }
+  };
 
-        {settingsSections.map((section, sectionIndex) => (
-          <View key={sectionIndex} style={styles.section}>
-            <ThemedText type="subtitle" style={styles.sectionTitle}>{section.title}</ThemedText>
-            <View style={[styles.sectionContent, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}>
-              {section.items.map((item, itemIndex) => (
-                <TouchableOpacity
-                  key={itemIndex}
-                  style={[
-                    styles.settingItem,
-                    { 
-                      borderBottomColor: Colors[colorScheme ?? 'light'].border,
-                      borderBottomWidth: itemIndex < section.items.length - 1 ? 1 : 0
-                    }
-                  ]}
-                  onPress={() => {
-                    if (item.title === 'Delete Account') {
-                      Alert.alert('Delete Account', 'This action cannot be undone. Are you sure?');
-                    }
-                  }}
-                >
-                  <View style={styles.settingItemLeft}>
-                    <IconSymbol 
-                      name={item.icon} 
-                      size={20} 
-                      color={item.destructive ? '#FF3B30' : Colors[colorScheme ?? 'light'].text} 
-                    />
-                    <ThemedText 
-                      type="default" 
-                      style={[
-                        styles.settingItemText,
-                        { color: item.destructive ? '#FF3B30' : undefined }
-                      ]}
-                    >
-                      {item.title}
-                    </ThemedText>
-                  </View>
-                  
-                  <View style={styles.settingItemRight}>
-                    {item.type === 'toggle' ? (
-                      <Switch
-                        value={item.value}
-                        onValueChange={() => {}}
-                        trackColor={{ false: '#767577', true: Colors[colorScheme ?? 'light'].tint }}
-                        thumbColor={item.value ? '#fff' : '#f4f3f4'}
-                      />
-                    ) : item.type === 'arrow' ? (
-                      <View style={styles.arrowContainer}>
-                        {item.value && (
-                          <ThemedText type="default" style={styles.settingValue}>
-                            {item.value}
-                          </ThemedText>
-                        )}
-                        <IconSymbol name="chevron.right" size={16} color={Colors[colorScheme ?? 'light'].text + '60'} />
-                      </View>
-                    ) : null}
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
+  const handleEditProfile = () => {
+    console.log('Edit Profile');
+    // Add edit profile logic here
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <BackButtonWithText />
+<View style={{marginTop:30}}/><CenteredTitle title="Settings" />
+      </View>
+
+      {/* Profile Section */}
+      <View style={styles.profileSection}>
+        <Image
+          source={require('@/assets/images/ellipse.png')}
+          style={styles.profilePicture}
+          resizeMode="cover"
+        />
+        <TouchableOpacity onPress={handleEditProfile}>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Settings Options */}
+      <View style={styles.optionsContainer}>
+        {settingsOptions.map((option, index) => (
+          <View key={option.id}>
+            <TouchableOpacity
+              style={styles.optionItem}
+              onPress={() => handleOptionPress(option.title)}
+            >
+              <Image
+                source={option.icon}
+                style={styles.optionIcon}
+                resizeMode="contain"
+              />
+                <Text style={styles.optionText}>{option.title}</Text>
+                <Image
+                  source={require('@/assets/images/chevron-right.png')}
+                  style={styles.chevronIcon}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            {index < settingsOptions.length - 0 && (
+              <View style={styles.separator} />
+            )}
           </View>
         ))}
-
-        <TouchableOpacity
-          style={[styles.logoutButton, { backgroundColor: Colors[colorScheme ?? 'light'].tint + '20' }]}
-          onPress={handleLogout}
-        >
-          <IconSymbol name="power" size={20} color={Colors[colorScheme ?? 'light'].tint} />
-          <ThemedText type="default" style={[styles.logoutText, { color: Colors[colorScheme ?? 'light'].tint }]}>
-            Logout
-          </ThemedText>
-        </TouchableOpacity>
-      </ScrollView>
-    </ThemedView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 40,
+    backgroundColor: 'white',
   },
   header: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  profileSection: {
+    alignItems: 'center',
+    paddingVertical: 1,
+  },
+  profilePicture: {
+    width: 190,
+    height: 190,
+    borderRadius: 50,
+    marginBottom: 4,
+  },
+  editProfileText: {
+    top:-50,
+    fontSize: 16,
+    color: '#666666',
+  },
+  optionsContainer: {
+    paddingHorizontal: 20,
+  },
+  optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 4,
+    position: 'relative',
   },
-  backButton: {
-    padding: 8,
-  },
-  backButtonImage: {
+  optionIcon: {
     width: 24,
     height: 24,
+    marginRight: 16,
+    tintColor: '#595959',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  placeholder: {
-    width: 40,
-  },
-  section: {
-    marginBottom: 24,
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    opacity: 0.7,
-  },
-  sectionContent: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  settingItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  optionText: {
     flex: 1,
-  },
-  settingItemText: {
     fontSize: 16,
+    color: '#333333',
   },
-  settingItemRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  chevronIcon: {
+    width: 16,
+    height: 16,
+    position: 'absolute',
+    tintColor:'#595959',
+    right: 0,
   },
-  arrowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  settingValue: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    marginHorizontal: 20,
-    borderRadius: 12,
-    gap: 8,
-  },
-  logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
+  separator: {
+    height: 1,
+    backgroundColor: '#E2E2E2',
   },
 });
