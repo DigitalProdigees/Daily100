@@ -1,8 +1,9 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
 import JournalStorage, { JournalEntry } from '@/utils/journalStorage';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   FlatList,
   Image,
   StyleSheet,
@@ -19,6 +20,10 @@ export default function JournalScreen() {
   
   // Dynamic journal entries - populated from storage
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  
+  // Animation values
+  const searchBarWidth = useRef(new Animated.Value(0)).current;
+  const searchBarOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Load initial journals
@@ -39,7 +44,39 @@ export default function JournalScreen() {
   };
 
   const handleSearch = () => {
-    setSearchVisible(!searchVisible);
+    if (!searchVisible) {
+      // Show search bar with animation
+      setSearchVisible(true);
+      Animated.parallel([
+        Animated.timing(searchBarWidth, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(searchBarOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    } else {
+      // Hide search bar with animation
+      Animated.parallel([
+        Animated.timing(searchBarWidth, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(searchBarOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        setSearchVisible(false);
+        setSearchText('');
+      });
+    }
   };
 
   const renderJournalEntry = ({ item }: { item: JournalEntry }) => (
@@ -69,13 +106,47 @@ export default function JournalScreen() {
           <>
             <View style={styles.topRow}>
               <BackButtonWithText />
-              <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-                <Image
-                  source={require('@/assets/images/search1.png')}
-                  style={styles.searchIcon}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
+              <View style={styles.searchContainer}>
+                {!searchVisible ? (
+                  <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+                    <Image
+                      source={require('@/assets/images/search1.png')}
+                      style={styles.searchIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <Animated.View 
+                    style={[
+                      styles.animatedSearchBar,
+                      {
+                        width: searchBarWidth.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 200],
+                        }),
+                        opacity: searchBarOpacity,
+                      }
+                    ]}
+                  >
+                    <Image
+                      source={require('@/assets/images/search1.png')}
+                      style={styles.searchIconInField}
+                      resizeMode="contain"
+                    />
+                    <TextInput
+                      style={styles.searchInput}
+                      placeholder="Search journals..."
+                      placeholderTextColor="#999999"
+                      value={searchText}
+                      onChangeText={setSearchText}
+                      autoFocus={true}
+                    />
+                    <TouchableOpacity onPress={handleSearch} style={styles.closeButton}>
+                      <Text style={styles.closeButtonText}>✕</Text>
+                    </TouchableOpacity>
+                  </Animated.View>
+                )}
+              </View>
             </View>
             <View style={styles.titleRow}>
               <Text style={styles.title}>Your Journal</Text>
@@ -96,18 +167,6 @@ export default function JournalScreen() {
         )}
       </View>
 
-      {/* Search Bar */}
-      {searchVisible && (
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search journals..."
-            placeholderTextColor="#999999"
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-        </View>
-      )}
 
       {/* Journal Entries */}
       {journalEntries.length === 0 ? (
@@ -176,13 +235,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   searchButton: {
     padding: 8,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchIcon: {
     width: 20,
     height: 20,
     tintColor: '#333333',
+  },
+  animatedSearchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    height: 36,
+  },
+  searchIconInField: {
+    width: 20,
+    height: 20,
+    tintColor: '#666666',
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333333',
+    paddingVertical: 0,
+    height: 24,
+  },
+  closeButton: {
+    padding: 4,
+    marginLeft: 8,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    color: '#666666',
+    fontWeight: 'bold',
   },
   filterButton: {
     padding: 8,
@@ -191,20 +290,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: '#D11A38',
-  },
-  searchContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    backgroundColor: '#F8F8F8',
-  },
-  searchInput: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
   },
   journalList: {
     paddingHorizontal: 20,
@@ -306,6 +391,5 @@ const styles = StyleSheet.create({
   floatingAddIcon: {
     width: 30,
     height: 30,
-    tintColor: 'white',
   },
 });
