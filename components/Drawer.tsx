@@ -54,6 +54,8 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
       router.push('/(home)/settings');
     } else if (title === 'Contact Us / Request Coach') {
       router.push('/(home)/contact');
+    } else if (title === 'Journal') {
+      router.push('/(home)/journal');
     } else {
         console.log(`Navigate to: ${title}`);
         }

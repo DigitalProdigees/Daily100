@@ -1,20 +1,19 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
 import CenteredTitle from '@/components/CenteredTitle';
+import { router } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ContactUsScreen() {
   const handleContactUs = () => {
-    // Navigate to contact form or handle contact us action
-    console.log('Contact Us pressed');
-    // You can navigate to a contact form screen here if needed
+    // Navigate to contact form screen
+    router.push('/contact-form');
   };
 
   const handleRequestCoach = () => {
-    // Navigate to coach request form or handle coach request action
-    console.log('Request Coach pressed');
-    // You can navigate to a coach request screen here if needed
+    // Navigate to coach selection screen
+    router.push('/coach-selection');
   };
 
   return (
