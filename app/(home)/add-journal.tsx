@@ -25,18 +25,7 @@ interface MediaItem {
 export default function AddJournalScreen() {
   const [journalName, setJournalName] = useState('');
   const [journalDescription, setJournalDescription] = useState('');
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([
-    {
-      id: '1',
-      uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop',
-      type: 'image'
-    },
-    {
-      id: '2',
-      uri: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop',
-      type: 'image'
-    }
-  ]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   const handleUpload = async () => {
     try {
@@ -84,8 +73,9 @@ export default function AddJournalScreen() {
       id: Date.now().toString(),
       title: journalName.trim(),
       description: journalDescription.trim(),
-      imageUri: mediaItems.length > 0 ? mediaItems[0].uri : 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop',
-      fileCount: mediaItems.length
+      imageUri: mediaItems.length > 0 ? mediaItems[0].uri : '',
+      fileCount: mediaItems.length,
+      mediaItems: mediaItems
     };
 
     // Save to storage

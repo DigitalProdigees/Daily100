@@ -79,10 +79,25 @@ export default function JournalScreen() {
     }
   };
 
+  const handleJournalPress = (journal: JournalEntry) => {
+    router.push({
+      pathname: '/(home)/journal-detail',
+      params: {
+        journalData: JSON.stringify(journal)
+      }
+    });
+  };
+
   const renderJournalEntry = ({ item }: { item: JournalEntry }) => (
-    <TouchableOpacity style={styles.journalCard}>
+    <TouchableOpacity 
+      style={styles.journalCard}
+      onPress={() => handleJournalPress(item)}
+    >
       <View style={styles.imageSection}>
-        <Image source={{ uri: item.imageUri }} style={styles.journalImage} />
+        <Image 
+          source={item.imageUri ? { uri: item.imageUri } : require('@/assets/images/journal.png')} 
+          style={styles.journalImage} 
+        />
         <Text style={styles.fileCount}>{item.fileCount} files attached</Text>
       </View>
       <View style={styles.journalContent}>
@@ -186,14 +201,16 @@ export default function JournalScreen() {
         />
       )}
 
-      {/* Floating Add Button */}
-      <TouchableOpacity style={styles.floatingAddButton} onPress={handleAddJournal}>
-        <Image
-          source={require('@/assets/images/add1.png')}
-          style={styles.floatingAddIcon}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+      {/* Floating Add Button - Only show when there are journals */}
+      {journalEntries.length > 0 && (
+        <TouchableOpacity style={styles.floatingAddButton} onPress={handleAddJournal}>
+          <Image
+            source={require('@/assets/images/add1.png')}
+            style={styles.floatingAddIcon}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }

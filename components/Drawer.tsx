@@ -56,6 +56,10 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
       router.push('/(home)/contact');
     } else if (title === 'Journal') {
       router.push('/(home)/journal');
+    } else if (title === 'Library') {
+      router.push('/(home)/add-personal-goals');
+    } else if (title === 'My Daily 100') {
+      router.push('/(home)/my-daily-100');
     } else {
         console.log(`Navigate to: ${title}`);
         }
