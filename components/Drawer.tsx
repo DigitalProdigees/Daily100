@@ -59,10 +59,12 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     } else if (title === 'Library') {
       router.push('/(home)/add-personal-goals');
     } else if (title === 'My Daily 100') {
-      router.push('/(home)/my-daily-100');
+      router.push('/(home)/add-personal-goals');
+    } else if (title === 'How to use app') {
+      router.push('/(home)/daily-journal');
     } else {
-        console.log(`Navigate to: ${title}`);
-        }
+      console.log(`Navigate to: ${title}`);
+    }
   };
 
   const handleLogout = () => {
@@ -95,7 +97,7 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     <>
       {/* Backdrop */}
       <TouchableOpacity style={styles.backdrop} onPress={onClose} activeOpacity={1} />
-      
+
       {/* Drawer */}
       <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
         <View style={styles.drawerContent}>
@@ -113,7 +115,7 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
           </View>
 
           {/* Menu Items */}
-          <ScrollView 
+          <ScrollView
             style={styles.menuList}
             contentContainerStyle={styles.menuListContent}
             showsVerticalScrollIndicator={false}
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
   },
   drawerContent: {
     flex: 1,
-    paddingTop:40,
+    paddingTop: 40,
     paddingHorizontal: 20,
   },
   profileSection: {
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#D11A38',
     marginBottom: 8,
-    marginTop:-50
+    marginTop: -50
   },
   editProfileText: {
     fontSize: 16,
@@ -257,8 +259,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     marginBottom: 40,
-    alignSelf:'center',
-width:150  },
+    alignSelf: 'center',
+    width: 150
+  },
   logoutText: {
     fontSize: 16,
     color: '#595959',

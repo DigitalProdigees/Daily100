@@ -1,4 +1,4 @@
-import BackButton from '@/components/BackButton';
+import BackButtonWithText from '@/components/BackButtonWithText';
 import { ThemedText } from '@/components/ThemedText';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -10,7 +10,7 @@ export default function ForgotPasswordScreen() {
 
   const handleResendLink = async () => {
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
@@ -28,29 +28,29 @@ export default function ForgotPasswordScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         {/* Back Button */}
-        <BackButton />
+        <BackButtonWithText isDarkMode={false} />
       </View>
-      
+
       <View style={styles.content}>
         {/* Mail Icon */}
         <View style={styles.iconContainer}>
-          <Image 
-            source={require('@/assets/images/mail.png')} 
+          <Image
+            source={require('@/assets/images/mail.png')}
             style={styles.mailIcon}
             resizeMode="contain"
           />
         </View>
-        
+
         {/* Title */}
         <ThemedText type="title" style={styles.title}>
           Forget Password
         </ThemedText>
-        
+
         {/* Description */}
         <ThemedText type="default" style={styles.description}>
           We send you the link to @ex****@gmail.com, please check and click it to reset password
         </ThemedText>
-        
+
         {/* Resend Button */}
         <TouchableOpacity
           style={[styles.resendButton, { opacity: isLoading ? 0.7 : 1 }]}
@@ -113,8 +113,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingHorizontal: 22,
+    paddingVertical: 10,
   },
 });

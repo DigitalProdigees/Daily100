@@ -16,7 +16,7 @@ export default function LoginScreen() {
     }
 
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
@@ -30,12 +30,12 @@ export default function LoginScreen() {
   };
 
   const handleForgotPassword = () => {
-    router.push('/(auth)/forgot-password');
+    router.push('/(auth)/forgot-password-email');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
@@ -78,7 +78,7 @@ export default function LoginScreen() {
               />
             </View>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.forgotPassword}
               onPress={handleForgotPassword}
             >
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   forgotText: {
     fontSize: 14,
     fontWeight: '500',
-    color:'#595959'
+    color: '#595959'
   },
   loginButton: {
     paddingVertical: 16,
