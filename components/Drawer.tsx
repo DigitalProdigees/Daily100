@@ -57,7 +57,7 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     } else if (title === 'Journal') {
       router.push('/(home)/journal');
     } else if (title === 'Library') {
-      router.push('/(home)/add-personal-goals');
+      router.push('/(home)/library');
     } else if (title === 'My Daily 100') {
       router.push('/(home)/add-personal-goals');
     } else if (title === 'How to use app') {

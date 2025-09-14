@@ -52,10 +52,10 @@ export default function DailyMust() {
 					{/* Column Headers */}
 					<View style={styles.headerRow}>
 						<View style={styles.titleColumn}>
-							<Text style={[styles.headerText, { width: 100, right: 5 }]}>LinkedIn Activity</Text>
+							<Text style={[styles.headerText, { width: 90, right: 5 }]}>LinkedIn Activity</Text>
 						</View>
 						<View style={styles.goalColumn}>
-							<Text style={[styles.headerText, { left: 45 }]}>Daily Goal</Text>
+							<Text style={[styles.headerText, { left: 15, width: 80 }]}>Daily Goal</Text>
 						</View>
 						<View style={styles.pointsColumn}>
 							<Text style={[styles.headerText, { left: 20 }]}>Points</Text>
