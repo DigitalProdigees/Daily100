@@ -36,7 +36,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -48,7 +48,6 @@ export default function HomeScreen() {
             <Image
               source={require('@/assets/images/2.png')}
               style={styles.goalCardBackground}
-              resizeMode="cover"
             />
             <View style={styles.goalCardOverlay}>
               <Text style={styles.goalCategory}>Wealth</Text>
@@ -74,7 +73,7 @@ export default function HomeScreen() {
               <Text style={styles.viewAllText}>View all</Text>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.assessmentList}>
             <View style={styles.assessmentItem}>
               <View style={styles.assessmentContent}>
@@ -126,7 +125,7 @@ export default function HomeScreen() {
               <Text style={styles.viewAllText}>View all</Text>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.completedList}>
             <View style={styles.completedItem}>
               <Image
@@ -233,8 +232,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-marginHorizontal:4,   
- paddingVertical: 16,
+    marginHorizontal: 4,
+    paddingVertical: 16,
   },
   menuButton: {
     padding: 8,
@@ -271,7 +270,7 @@ marginHorizontal:4,
   sectionTitle: {
     fontSize: 24,
     color: '#595959',
-    fontWeight:600
+    fontWeight: 600
   },
   viewAllText: {
     fontSize: 16,
@@ -279,15 +278,20 @@ marginHorizontal:4,
     fontWeight: 500,
   },
   goalCard: {
-    height: 200,
-    borderRadius: 36,
-    overflow:'hidden'
+    height: 220,
+    borderRadius: 16,
+    overflow: 'hidden',
+
   },
   goalCardBackground: {
     width: '100%',
-    height: '110%',
+    height: '130%',
+    borderRadius: 36,
+    top: -20
+
   },
   goalCardOverlay: {
+
     position: 'absolute',
     top: 0,
     left: 0,
@@ -296,7 +300,9 @@ marginHorizontal:4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+
   },
+
   goalCategory: {
     fontSize: 32,
     fontWeight: '500',
@@ -342,9 +348,9 @@ marginHorizontal:4,
   assessmentImage: {
     width: 50,
     height: 50,
-    borderRadius:35,
-  marginLeft:-12
-    
+    borderRadius: 35,
+    marginLeft: -12
+
   },
   assessmentContent: {
     flex: 1,
@@ -364,7 +370,7 @@ marginHorizontal:4,
     fontWeight: '500',
   },
   completedList: {
-  
+
   },
   completedItem: {
     flexDirection: 'row',
@@ -374,7 +380,7 @@ marginHorizontal:4,
   completedImage: {
     width: 50,
     height: 50,
-    marginLeft:-12
+    marginLeft: -12
   },
   completedContent: {
     flex: 1,
