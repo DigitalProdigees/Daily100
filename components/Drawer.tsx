@@ -47,23 +47,25 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     { id: 12, title: 'My Daily 100', icon: 'daily', isHighlighted: true },
   ];
 
-  const handleMenuPress = (title: string) => {
+  const handleMenuPress = (item: { id: number; title: string; icon: string; isHighlighted?: boolean }) => {
     onClose();
     // Add navigation logic here based on menu item
-    if (title === 'Settings') {
+    if (item.title === 'Settings') {
       router.push('/(home)/settings');
-    } else if (title === 'Contact Us / Request Coach') {
+    } else if (item.title === 'Contact Us / Request Coach') {
       router.push('/(home)/contact');
-    } else if (title === 'Journal') {
+    } else if (item.title === 'Journal') {
       router.push('/(home)/journal');
-    } else if (title === 'Library') {
+    } else if (item.title === 'Library') {
       router.push('/(home)/library');
-    } else if (title === 'My Daily 100') {
+    } else if (item.title === 'My Daily 100' && item.id === 1) {
       router.push('/(home)/add-personal-goals');
-    } else if (title === 'How to use app') {
+    } else if (item.title === 'My Daily 100' && item.id === 12) {
+      router.push('/(home)/my-daily-100');
+    } else if (item.title === 'How to use app') {
       router.push('/(home)/daily-journal');
     } else {
-      console.log(`Navigate to: ${title}`);
+      console.log(`Navigate to: ${item.title}`);
     }
   };
 
@@ -124,7 +126,7 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
               <TouchableOpacity
                 key={item.id}
                 style={styles.menuItem}
-                onPress={() => handleMenuPress(item.title)}
+                onPress={() => handleMenuPress(item)}
               >
                 <View style={styles.menuItemContent}>
                   <Image

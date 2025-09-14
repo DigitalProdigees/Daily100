@@ -686,6 +686,7 @@ export default function MyDaily100Screen() {
                         call.status === 'pending' && styles.dailyCallsPendingText,
                         call.status === 'pending' && toggleEnabled && styles.dailyCallsPendingTextDark,
                         call.status === 'crossed' && styles.dailyCallsCrossedText,
+                        call.status === 'crossed' && toggleEnabled && styles.dailyCallsCrossedTextDark,
                       ]}>
                         {call.number}
                       </Text>
@@ -1687,6 +1688,10 @@ const styles = StyleSheet.create({
     // No additional styling needed for crossed items
   },
   dailyCallsCrossedText: {
+    color: '#00000080',
+    textDecorationLine: 'line-through',
+  },
+  dailyCallsCrossedTextDark: {
     color: '#FFFFFF',
     textDecorationLine: 'line-through',
   },
