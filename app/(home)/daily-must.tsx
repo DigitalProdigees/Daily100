@@ -55,10 +55,10 @@ export default function DailyMust() {
 							<Text style={[styles.headerText, { width: 90, right: 5 }]}>LinkedIn Activity</Text>
 						</View>
 						<View style={styles.goalColumn}>
-							<Text style={[styles.headerText, { left: 15, width: 80 }]}>Daily Goal</Text>
+							<Text style={[styles.headerText, { left: 8, width: 70 }]}>Daily Goal</Text>
 						</View>
 						<View style={styles.pointsColumn}>
-							<Text style={[styles.headerText, { left: 20 }]}>Points</Text>
+							<Text style={[styles.headerText, { left: 14 }]}>Points</Text>
 						</View>
 						<View style={styles.totalColumn}>
 							<Text style={styles.headerText}>Total</Text>
