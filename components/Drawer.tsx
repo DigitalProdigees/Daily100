@@ -1,6 +1,9 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { Animated, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuthContext } from '../contexts/AuthContext';
+import { getDisplayName } from '../utils/nameUtils';
+import { StorageService } from '../utils/storage';
 
 interface DrawerProps {
   visible: boolean;
@@ -12,6 +15,7 @@ const { width: screenWidth } = Dimensions.get('window');
 export default function Drawer({ visible, onClose }: DrawerProps) {
   const translateX = React.useRef(new Animated.Value(-screenWidth)).current;
   const [shouldRender, setShouldRender] = React.useState(false);
+  const { user, signOut } = useAuthContext();
 
   React.useEffect(() => {
     if (visible) {
@@ -70,9 +74,31 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
   };
 
   const handleLogout = () => {
-    onClose();
-    // Add logout logic here
-    console.log('Logout');
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              onClose();
+              await signOut();
+              await StorageService.clearUserData();
+              // Navigation will be handled automatically by auth state change
+            } catch (error) {
+              console.error('Logout error:', error);
+              Alert.alert('Error', 'Failed to logout. Please try again.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const getIconSource = (iconName: string) => {
@@ -93,7 +119,8 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
     return iconMap[iconName] || require('@/assets/images/bell.png');
   };
 
-  if (!shouldRender) return null;
+  // Don't render if not visible or if we're in the middle of a navigation
+  if (!shouldRender || !visible) return null;
 
   return (
     <>
@@ -110,8 +137,10 @@ export default function Drawer({ visible, onClose }: DrawerProps) {
               style={styles.profilePicture}
               resizeMode="cover"
             />
-            <Text style={styles.profileName}>Mary Linton</Text>
-            <TouchableOpacity onPress={() => handleMenuPress('Edit Profile')}>
+            <Text style={styles.profileName}>
+              {getDisplayName(user)}
+            </Text>
+            <TouchableOpacity onPress={() => handleMenuPress({ id: 0, title: 'Edit Profile', icon: 'profile' })}>
               <Text style={styles.editProfileText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>

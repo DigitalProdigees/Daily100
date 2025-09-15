@@ -7,10 +7,23 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StorageService } from '../../utils/storage';
 
 export default function SuccessScreen() {
-  const handleGetStarted = () => {
-    router.replace('/(auth)/login');
+  const handleGetStarted = async () => {
+    try {
+      console.log('Onboarding Success - Starting completion process...');
+      
+      // Mark onboarding as completed
+      await StorageService.setOnboardingCompleted();
+      console.log('Onboarding Success - Onboarding marked as completed');
+      
+      // Navigate to login
+      console.log('Onboarding Success - Navigating to login...');
+      router.replace('/(auth)/login');
+    } catch (error) {
+      console.error('Onboarding Success - Error during completion:', error);
+    }
   };
 
   return (

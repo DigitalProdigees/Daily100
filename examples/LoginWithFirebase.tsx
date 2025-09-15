@@ -3,17 +3,12 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuthContext } from '../contexts/AuthContext';
 
-export default function LoginScreen() {
+export default function LoginWithFirebaseScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { signIn, error } = useAuthContext();
-
-  React.useEffect(() => {
-    console.log('Login Screen - Component mounted');
-  }, []);
+  const { signIn, loading, error } = useAuthContext();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -21,16 +16,12 @@ export default function LoginScreen() {
       return;
     }
 
-    setIsLoading(true);
-
     try {
       await signIn(email, password);
-      // Navigation will be handled automatically by auth state change listener
-      // The PublicRoute component will detect the auth state change and navigate to home
+      // Navigation will be handled automatically by the auth state change
+      router.replace('/(home)/(tabs)');
     } catch (err: any) {
       Alert.alert('Login Failed', err.message || 'An error occurred during login');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -63,8 +54,7 @@ export default function LoginScreen() {
               <Text style={styles.label}>Email</Text>
               <TextInput
                 style={styles.input}
-                placeholder="example@email.com"
-                placeholderTextColor="#8E8E93"
+                placeholder="Enter your email"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -77,8 +67,7 @@ export default function LoginScreen() {
               <Text style={styles.label}>Password</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Password123."
-                placeholderTextColor="#8E8E93"
+                placeholder="Enter your password"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -87,32 +76,33 @@ export default function LoginScreen() {
               />
             </View>
 
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={handleForgotPassword}
-            >
-              <Text style={styles.forgotText}>Forget Password?</Text>
-            </TouchableOpacity>
+            {error && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            )}
 
             <TouchableOpacity
-              style={[styles.loginButton, { opacity: isLoading ? 0.7 : 1 }]}
+              style={[styles.loginButton, loading && styles.disabledButton]}
               onPress={handleLogin}
-              disabled={isLoading}
+              disabled={loading}
             >
               <Text style={styles.loginButtonText}>
-                {isLoading ? 'Signing In...' : 'Login'}
+                {loading ? 'Signing In...' : 'Sign In'}
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.forgotPassword} onPress={handleForgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <TouchableOpacity onPress={handleSignUp}>
+                <Text style={styles.signupLink}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={handleSignUp}>
-            <Text style={styles.signUpText}>Sign Up</Text>
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -122,112 +112,99 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
   keyboardView: {
     flex: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 40,
+    paddingHorizontal: 24,
     justifyContent: 'center',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 48,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#D11A38',
     marginBottom: 8,
-    textAlign: 'center',
+    color: '#1a1a1a',
   },
   subtitle: {
     fontSize: 16,
-    color: '#8E8E93',
-    textAlign: 'center',
+    color: '#666',
   },
   form: {
-    marginBottom: 30,
+    width: '100%',
   },
   inputContainer: {
     marginBottom: 20,
   },
   label: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#8E8E93',
+    fontWeight: '600',
     marginBottom: 8,
+    color: '#1a1a1a',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: '#ddd',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    backgroundColor: 'white',
-    color: 'black',
+    backgroundColor: '#f9f9f9',
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
+  errorContainer: {
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#fee',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#fcc',
   },
-  forgotText: {
+  errorText: {
+    color: '#c33',
     fontSize: 14,
-    fontWeight: '500',
-    color: '#595959'
+    textAlign: 'center',
   },
   loginButton: {
-    paddingVertical: 16,
+    backgroundColor: '#007AFF',
     borderRadius: 12,
+    paddingVertical: 16,
     alignItems: 'center',
-    backgroundColor: '#D11A38',
+    marginBottom: 16,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
   },
   loginButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
-  dividerContainer: {
+  forgotPassword: {
     alignItems: 'center',
-    marginVertical: 30,
+    marginBottom: 24,
   },
-  dividerText: {
-    fontSize: 16,
-    color: '#8E8E93',
+  forgotPasswordText: {
+    color: '#007AFF',
+    fontSize: 14,
   },
-  socialButtons: {
-    marginBottom: 12,
-  },
-  socialButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-  },
-  socialButtonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: 'black',
-  },
-  footer: {
+  signupContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
   },
-  footerText: {
+  signupText: {
     fontSize: 14,
-    color: '#595959',
+    color: '#666',
   },
-  signUpText: {
+  signupLink: {
     fontSize: 14,
+    color: '#007AFF',
     fontWeight: '600',
-    color: '#D11A38',
   },
 });

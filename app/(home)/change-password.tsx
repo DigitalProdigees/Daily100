@@ -1,23 +1,95 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
-import React, { useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function ChangePasswordScreen() {
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const { user, resetPassword } = useAuthContext();
+
+  // Automatically send email when screen loads
+  useEffect(() => {
+    if (user?.email && !emailSent) {
+      handleChangePassword();
+    }
+  }, [user?.email, emailSent]);
 
   const handleChangePassword = async () => {
+    if (!user?.email) {
+      Alert.alert('Error', 'No email address found for your account.');
+      return;
+    }
+
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+
+    try {
+      console.log('Change Password - Sending reset email to logged-in user:', user.email);
+      
+      // Send reset email to the currently logged-in user
+      await resetPassword(user.email);
+      
+      console.log('Change Password - Reset email sent successfully');
+      setEmailSent(true);
+
+      // Show alert with options
       Alert.alert(
-        'Password Change',
-        'Password change Link have been sent to your email.',
-        [{ text: 'OK'}]
+        'Email Sent',
+        'Password reset link has been sent to your email address.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {
+              console.log('Change Password - User cancelled');
+            }
+          },
+          {
+            text: 'Go to Mail',
+            onPress: () => {
+              console.log('Change Password - Opening mail app');
+              openMailApp();
+            }
+          }
+        ]
       );
-    }, 2000);
+
+    } catch (error: any) {
+      console.error('Change Password - Error sending reset email:', error);
+      console.error('Change Password - Error code:', error.code);
+      console.error('Change Password - Error message:', error.message);
+      
+      // Handle different types of errors
+      if (error.code === 'auth/invalid-email') {
+        console.log('Change Password - Invalid email format');
+        Alert.alert(
+          'Invalid Email',
+          'Your email address is not valid. Please contact support.',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('Change Password - User acknowledged invalid email');
+              }
+            }
+          ]
+        );
+      } else {
+        console.log('Change Password - Other error occurred:', error.code);
+        Alert.alert('Error', error.message || 'Failed to send reset email. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openMailApp = () => {
+    // Try to open the default mail app
+    Linking.openURL('mailto:').catch((err) => {
+      console.error('Error opening mail app:', err);
+      Alert.alert('Error', 'Could not open mail app. Please check your email manually.');
+    });
   };
 
   return (
@@ -37,18 +109,29 @@ export default function ChangePasswordScreen() {
 
         <Text style={styles.title}>Change Password</Text>
         <Text style={styles.description}>
-          Enter your email address and we'll send you Link to change your password.
+          {isLoading 
+            ? 'Sending password reset link to your email...' 
+            : emailSent 
+              ? 'Password reset link has been sent to your email address.'
+              : `We'll send a password reset link to your registered email address: ${user?.email}`
+          }
         </Text>
 
-        <TouchableOpacity
-          style={[styles.changePasswordButton, { opacity: isLoading ? 0.7 : 1 }]}
-          onPress={handleChangePassword}
-          disabled={isLoading}
-        >
-          <Text style={styles.changePasswordButtonText}>
-            {isLoading ? 'Sending...' : 'Send link'}
-          </Text>
-        </TouchableOpacity>
+        {isLoading && (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Sending email...</Text>
+          </View>
+        )}
+
+        {emailSent && !isLoading && (
+          <TouchableOpacity
+            style={styles.resendButton}
+            onPress={handleChangePassword}
+            disabled={isLoading}
+          >
+            <Text style={styles.resendButtonText}>Resend Link</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -104,6 +187,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   changePasswordButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#D11A38',
+    fontWeight: '500',
+  },
+  resendButton: {
+    backgroundColor: '#D11A38',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  resendButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',

@@ -1,13 +1,17 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
 import { ThemedText } from '@/components/ThemedText';
 import { router } from 'expo-router';
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Linking, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../../config/firebase';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function ForgotPasswordEmailScreen() {
 	const [email, setEmail] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+	const { resetPassword } = useAuthContext();
 
 	const handleSendEmail = async () => {
 		if (!email) {
@@ -24,12 +28,118 @@ export default function ForgotPasswordEmailScreen() {
 
 		setIsLoading(true);
 
-		// Simulate API call
-		setTimeout(() => {
-			setIsLoading(false);
-			// Navigate to the existing forgot-password screen
+		try {
+			console.log('Forgot Password - Checking if email exists using fetchSignInMethodsForEmail:', email);
+			
+			// First, check if email exists using fetchSignInMethodsForEmail
+			const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+			console.log('Forgot Password - Sign in methods found:', signInMethods);
+			console.log('Forgot Password - Sign in methods length:', signInMethods.length);
+			console.log('Forgot Password - Sign in methods type:', typeof signInMethods);
+			console.log('Forgot Password - Sign in methods is array:', Array.isArray(signInMethods));
+			
+			// Check if email is registered
+			if (signInMethods.length === 0) {
+				console.log('Forgot Password - Email not found in Firebase (empty array)');
+				Alert.alert(
+					'Email Not Found',
+					'This email address is not registered with our service. Please check your email address or sign up for a new account.',
+					[
+						{
+							text: 'OK',
+							onPress: () => {
+								console.log('Forgot Password - User acknowledged email not found');
+							}
+						}
+					]
+				);
+				return;
+			}
+			
+			console.log('Forgot Password - Email found, sending reset email to:', email);
+			
+			// Email exists, send reset email
+			await resetPassword(email);
+			
+			console.log('Forgot Password - Reset email sent successfully');
+			
+			// Navigate to forgot-password screen first
 			router.push('/(auth)/forgot-password');
-		}, 1500);
+			
+			// Show alert with options after navigation
+			setTimeout(() => {
+				Alert.alert(
+					'Email Sent',
+					'Password reset link has been sent to your email address.',
+					[
+						{
+							text: 'Cancel',
+							style: 'cancel',
+							onPress: () => {
+								console.log('Forgot Password - User cancelled');
+							}
+						},
+						{
+							text: 'Go to Mail',
+							onPress: () => {
+								console.log('Forgot Password - Opening mail app');
+								openMailApp();
+							}
+						}
+					]
+				);
+			}, 500); // Small delay to ensure navigation completes
+			
+		} catch (error: any) {
+			console.error('Forgot Password - Error during process:', error);
+			console.error('Forgot Password - Error code:', error.code);
+			console.error('Forgot Password - Error message:', error.message);
+			console.error('Forgot Password - Full error object:', JSON.stringify(error, null, 2));
+			
+			// Handle different types of errors
+			if (error.code === 'auth/invalid-email') {
+				console.log('Forgot Password - Invalid email format');
+				Alert.alert(
+					'Invalid Email',
+					'Please enter a valid email address.',
+					[
+						{
+							text: 'OK',
+							onPress: () => {
+								console.log('Forgot Password - User acknowledged invalid email');
+							}
+						}
+					]
+				);
+			} else if (error.code === 'auth/user-not-found') {
+				console.log('Forgot Password - Email not found in Firebase (from resetPassword)');
+				Alert.alert(
+					'Email Not Found',
+					'This email address is not registered with our service. Please check your email address or sign up for a new account.',
+					[
+						{
+							text: 'OK',
+							onPress: () => {
+								console.log('Forgot Password - User acknowledged email not found');
+							}
+						}
+					]
+				);
+			} else {
+				console.log('Forgot Password - Other error occurred:', error.code);
+				Alert.alert('Error', error.message || 'Failed to process request. Please try again.');
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const openMailApp = () => {
+		// Try to open the default mail app
+		Linking.openURL('mailto:').catch((err) => {
+			console.error('Error opening mail app:', err);
+			Alert.alert('Error', 'Could not open mail app. Please check your email manually.');
+		});
 	};
 
 	return (

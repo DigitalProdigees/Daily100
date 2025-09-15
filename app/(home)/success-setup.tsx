@@ -2,12 +2,21 @@ import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StorageService } from '../../utils/storage';
 
 export default function SuccessSetupScreen() {
   useEffect(() => {
-    // Navigate to home screen after 2 seconds
-    const timer = setTimeout(() => {
-      router.replace('/(home)/(tabs)');
+    // Mark profile setup as completed and navigate to home screen after 2 seconds
+    const timer = setTimeout(async () => {
+      try {
+        console.log('Success Setup - Marking profile setup as completed');
+        await StorageService.setProfileSetupCompleted();
+        console.log('Success Setup - Navigating to main screen');
+        router.replace('/(home)/(tabs)');
+      } catch (error) {
+        console.error('Success Setup - Error completing profile setup:', error);
+        router.replace('/(home)/(tabs)');
+      }
     }, 2000);
 
     return () => clearTimeout(timer);

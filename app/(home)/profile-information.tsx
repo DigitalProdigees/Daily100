@@ -1,18 +1,49 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
 import CenteredTitle from '@/components/CenteredTitle';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropdownPicker from 'react-native-dropdown-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { getDisplayName } from '../../utils/nameUtils';
 
 export default function ProfileInformationScreen() {
+  const { user } = useAuthContext();
   const [formData, setFormData] = useState({
     fullName: '',
     country: '',
     city: '',
     address: '',
   });
+
+  // Set the name from email when component mounts
+  useEffect(() => {
+    console.log('Profile Info - useEffect triggered');
+    console.log('Profile Info - User:', user);
+    console.log('Profile Info - Current fullName:', formData.fullName);
+    
+    if (user) {
+      const extractedName = getDisplayName(user);
+      console.log('Profile Info - Extracted name:', extractedName);
+      console.log('Profile Info - User email:', user.email);
+      
+      // Always set the name if it's empty or just "User"
+      if (!formData.fullName || formData.fullName === 'User') {
+        console.log('Profile Info - Setting name to:', extractedName);
+        setFormData(prev => ({ ...prev, fullName: extractedName }));
+      }
+    }
+  }, [user]);
+
+  // Additional effect to ensure name is set even if user loads later
+  useEffect(() => {
+    if (user && user.email && (!formData.fullName || formData.fullName === 'User')) {
+      const extractedName = getDisplayName(user);
+      console.log('Profile Info - Secondary effect setting name to:', extractedName);
+      setFormData(prev => ({ ...prev, fullName: extractedName }));
+    }
+  }, [user?.email, formData.fullName]);
 
   // Dropdown states
   const [countryOpen, setCountryOpen] = useState(false);

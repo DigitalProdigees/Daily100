@@ -1,11 +1,75 @@
 import { router } from 'expo-router';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { StorageService } from '../../utils/storage';
 
 export default function PrivacyScreen() {
-  const handleAgree = () => {
-    router.replace('/(home)/profile-information');
+  const { user, signUp } = useAuthContext();
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+
+  const handleAgree = async () => {
+    try {
+      setIsCreatingUser(true);
+      
+      // Check if user is already authenticated
+      if (user) {
+        console.log('Privacy - User already authenticated, navigating to profile');
+        router.replace('/(home)/profile-information');
+        return;
+      }
+
+      // Get temporary signup data
+      const signupData = await StorageService.getTempSignupData();
+      
+      if (!signupData) {
+        console.log('Privacy - No signup data found, redirecting to login');
+        Alert.alert('Error', 'No signup data found. Please start the signup process again.');
+        router.replace('/(auth)/login');
+        return;
+      }
+
+      console.log('Privacy - Creating user with email:', signupData.email);
+      
+      // Create the user account
+      await signUp(signupData.email, signupData.password);
+      
+      // Clear temporary signup data
+      await StorageService.clearTempSignupData();
+      
+      // Clear profile setup state since this is a new user
+      await StorageService.clearProfileSetupState();
+      console.log('Privacy - Cleared profile setup state for new user');
+      
+      console.log('Privacy - User created successfully, navigating to profile setup');
+      
+      // Navigate directly to profile setup since this is a new user
+      router.replace('/(home)/profile-information');
+      
+    } catch (error: any) {
+            
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert(
+          'Email Already Registered',
+          'This email is already registered. Please use a different email or sign in.',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Clear temp data and go back to signup
+                StorageService.clearTempSignupData();
+                router.replace('/(auth)/signup');
+              }
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Error', error.message || 'Failed to create account. Please try again.');
+      }
+    } finally {
+      setIsCreatingUser(false);
+    }
   };
 
   return (
@@ -34,8 +98,14 @@ export default function PrivacyScreen() {
           </Text>
         </ScrollView>
         
-        <TouchableOpacity style={styles.agreeButton} onPress={handleAgree}>
-          <Text style={styles.agreeButtonText}>Agree</Text>
+        <TouchableOpacity 
+          style={[styles.agreeButton, isCreatingUser && styles.agreeButtonDisabled]} 
+          onPress={handleAgree}
+          disabled={isCreatingUser}
+        >
+          <Text style={styles.agreeButtonText}>
+            {isCreatingUser ? 'Creating Account...' : 'Agree'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -82,6 +152,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  agreeButtonDisabled: {
+    backgroundColor: '#999999',
+    opacity: 0.7,
   },
   agreeButtonText: {
     color: 'white',

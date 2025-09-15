@@ -4,8 +4,11 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function SettingsScreen() {
+  const { user } = useAuthContext();
+  
   const settingsOptions = [
     {
       id: 1,
@@ -26,6 +29,8 @@ export default function SettingsScreen() {
 
   const handleOptionPress = (title: string) => {
     if (title === 'Change Password') {
+      // Navigate directly to change password screen
+      console.log('Change Password - Navigating to change password screen');
       router.push('/(home)/change-password');
     } else {
       console.log(`Navigate to: ${title}`);

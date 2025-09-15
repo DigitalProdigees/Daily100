@@ -1,9 +1,13 @@
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ThemedText } from '@/components/ThemedText';
 import { router } from 'expo-router';
+import { Auth, fetchSignInMethodsForEmail } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../../config/firebase';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { StorageService } from '../../utils/storage';
 
 export default function SignUpScreen() {
   const [formData, setFormData] = useState({
@@ -14,9 +18,21 @@ export default function SignUpScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const { signUp, error } = useAuthContext();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Clear email error when user starts typing
+    if (field === 'email' && emailError) {
+      setEmailError('');
+    }
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleSignUp = async () => {
@@ -24,6 +40,11 @@ export default function SignUpScreen() {
 
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
       return;
     }
 
@@ -42,13 +63,37 @@ export default function SignUpScreen() {
       return;
     }
 
+    // Check if email is already registered using fetchSignInMethodsForEmail
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      console.log('Signup - Checking if email is already registered:', email);
+      
+      // Check if email exists using fetchSignInMethodsForEmail
+      const signInMethods = await fetchSignInMethodsForEmail(auth as Auth, email);
+      console.log('Signup - Sign in methods found:', signInMethods);
+      console.log('Signup - Sign in methods length:', signInMethods.length);
+      
+      // Check if email is already registered
+      if (signInMethods.length > 0) {
+        console.log('Signup - Email already registered, showing error');
+        setEmailError('This email is already registered. Please use a different email or sign in.');
+        return;
+      }
+      
+      console.log('Signup - Email is available, storing signup data');
+      
+      // Store signup data and navigate to terms screen
+      const signupData = { email, password };
+      await StorageService.setTempSignupData(signupData);
+      
+      console.log('Signup - Signup data stored, navigating to terms screen');
       router.push('/(auth)/terms');
-    }, 2000);
+    } catch (error) {
+      console.error('Signup - Error checking email or storing signup data:', error);
+      Alert.alert('Error', 'Failed to proceed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignIn = () => {
@@ -88,7 +133,7 @@ export default function SignUpScreen() {
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Email</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, emailError && styles.inputError]}
                 placeholder="example@email.com"
                 placeholderTextColor="#8E8E93"
                 value={formData.email}
@@ -97,6 +142,9 @@ export default function SignUpScreen() {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
+              {emailError ? (
+                <Text style={styles.errorText}>{emailError}</Text>
+              ) : null}
             </View>
 
             <View style={styles.inputContainer}>
@@ -247,6 +295,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'white',
     color: 'black',
+  },
+  inputError: {
+    borderColor: '#D11A38',
+  },
+  errorText: {
+    color: '#D11A38',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
   },
   checkboxContainer: {
     marginBottom: 30,
