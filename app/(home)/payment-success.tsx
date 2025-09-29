@@ -12,7 +12,7 @@ export default function PaymentSuccessScreen() {
   useEffect(() => {
     // Auto-navigate to coach-selection after 2 seconds
     const timer = setTimeout(() => {
-      router.push('/coach-selection');
+      router.push('/(home)/coach-selection');
     }, 2000);
 
     return () => clearTimeout(timer);

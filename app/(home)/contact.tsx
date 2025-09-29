@@ -8,12 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function ContactUsScreen() {
   const handleContactUs = () => {
     // Navigate to contact form screen
-    router.push('/contact-form');
+    router.push('/(home)/contact-form');
   };
 
   const handleRequestCoach = () => {
     // Navigate to coach selection screen
-    router.push('/coach-selection');
+    router.push('/(home)/coach-selection');
   };
 
   return (

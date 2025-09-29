@@ -62,29 +62,34 @@ export default function AddJournalScreen() {
     setMediaItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!journalName.trim() || !journalDescription.trim()) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
-    // Create journal entry data
-    const journalData = {
-      id: Date.now().toString(),
-      title: journalName.trim(),
-      description: journalDescription.trim(),
-      imageUri: mediaItems.length > 0 ? mediaItems[0].uri : '',
-      fileCount: mediaItems.length,
-      mediaItems: mediaItems
-    };
+    try {
+      // Create journal entry data
+      const journalData = {
+        id: Date.now().toString(),
+        title: journalName.trim(),
+        description: journalDescription.trim(),
+        imageUri: mediaItems.length > 0 ? mediaItems[0].uri : '',
+        fileCount: mediaItems.length,
+        mediaItems: mediaItems
+      };
 
-    // Save to storage
-    JournalStorage.getInstance().addJournal(journalData);
-    
-    console.log('Journal saved:', journalData);
-    
-    // Navigate back to journal screen
-    router.back();
+      // Save to storage (now async)
+      await JournalStorage.getInstance().addJournal(journalData);
+      
+      console.log('Journal saved:', journalData);
+      
+      // Navigate back to journal screen
+      router.back();
+    } catch (error) {
+      console.error('Error saving journal:', error);
+      Alert.alert('Error', 'Failed to save journal. Please try again.');
+    }
   };
 
   const renderMediaItem = ({ item }: { item: MediaItem }) => (
