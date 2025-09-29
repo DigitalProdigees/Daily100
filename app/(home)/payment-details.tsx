@@ -37,7 +37,7 @@ export default function PaymentDetailsScreen() {
   const handlePayAndConfirm = () => {
     console.log('Payment details:', { cardNumber, expireDate, cvv, saveCardDetails });
     // Navigate to payment success screen
-    router.push('/payment-success');
+    router.push('/(home)/payment-success');
   };
 
   const handleKeyPress = (key: string) => {
