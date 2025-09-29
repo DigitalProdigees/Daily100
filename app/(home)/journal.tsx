@@ -3,14 +3,14 @@ import JournalStorage, { JournalEntry } from '@/utils/journalStorage';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,16 +27,7 @@ export default function JournalScreen() {
 
   useEffect(() => {
     // Load initial journals
-    const loadJournals = async () => {
-      try {
-        const journals = await JournalStorage.getInstance().getJournals();
-        setJournalEntries(journals);
-      } catch (error) {
-        console.error('Error loading journals:', error);
-      }
-    };
-
-    loadJournals();
+    setJournalEntries(JournalStorage.getInstance().getJournals());
 
     // Subscribe to changes
     const unsubscribe = JournalStorage.getInstance().subscribe((journals) => {

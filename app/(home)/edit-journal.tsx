@@ -4,17 +4,17 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Animated,
-    FlatList,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  FlatList,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 export default function EditJournalScreen() {
@@ -83,70 +83,59 @@ export default function EditJournalScreen() {
     setMediaItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!journalName.trim() || !journalDescription.trim()) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
-    try {
-      // Create updated journal entry data
-      const updatedJournalData = {
-        ...journalData,
-        title: journalName.trim(),
-        description: journalDescription.trim(),
-        imageUri: mediaItems.length > 0 ? mediaItems[0].uri : '',
-        fileCount: mediaItems.length,
-        mediaItems: mediaItems
-      };
+    // Create updated journal entry data
+    const updatedJournalData = {
+      ...journalData,
+      title: journalName.trim(),
+      description: journalDescription.trim(),
+      imageUri: mediaItems.length > 0 ? mediaItems[0].uri : '',
+      fileCount: mediaItems.length,
+      mediaItems: mediaItems
+    };
 
-      // Show success overlay
-      setShowSuccessOverlay(true);
-      
-      // Animate overlay in
+    // Show success overlay
+    setShowSuccessOverlay(true);
+    
+    // Animate overlay in
+    Animated.timing(overlayOpacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
+    // Update the journal in storage
+    JournalStorage.getInstance().updateJournal(updatedJournalData);
+    console.log('Journal updated:', updatedJournalData);
+    
+    // Hide overlay after 2 seconds and navigate to journal list
+    setTimeout(() => {
       Animated.timing(overlayOpacity, {
-        toValue: 1,
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
-      }).start();
-
-      // Update the journal in storage (now async)
-      await JournalStorage.getInstance().updateJournal(updatedJournalData);
-      console.log('Journal updated:', updatedJournalData);
-      
-      // Hide overlay after 2 seconds and navigate to journal list
-      setTimeout(() => {
-        Animated.timing(overlayOpacity, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          setShowSuccessOverlay(false);
-          router.push('/(home)/journal');
-        });
-      }, 2000);
-    } catch (error) {
-      console.error('Error updating journal:', error);
-      setShowSuccessOverlay(false);
-      Alert.alert('Error', 'Failed to update journal. Please try again.');
-    }
+      }).start(() => {
+        setShowSuccessOverlay(false);
+        router.push('/(home)/journal');
+      });
+    }, 2000);
   };
 
   const handleDelete = () => {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = async () => {
-    try {
-      setShowDeleteModal(false);
-      // Delete the journal from storage (now async)
-      await JournalStorage.getInstance().deleteJournal(journalData.id);
-      console.log('Journal deleted:', journalData.id);
-      router.push('/(home)/journal');
-    } catch (error) {
-      console.error('Error deleting journal:', error);
-      Alert.alert('Error', 'Failed to delete journal. Please try again.');
-    }
+  const handleConfirmDelete = () => {
+    setShowDeleteModal(false);
+    // Delete the journal from storage
+    JournalStorage.getInstance().deleteJournal(journalData.id);
+    console.log('Journal deleted:', journalData.id);
+    router.push('/(home)/journal');
   };
 
   const handleCancelDelete = () => {

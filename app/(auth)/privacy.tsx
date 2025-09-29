@@ -42,9 +42,10 @@ export default function PrivacyScreen() {
       await StorageService.clearProfileSetupState();
       console.log('Privacy - Cleared profile setup state for new user');
       
-      console.log('Privacy - User created successfully, auth state listener will handle navigation');
+      console.log('Privacy - User created successfully, navigating to profile setup');
       
-      // Let the auth state listener handle navigation to avoid double navigation
+      // Navigate directly to profile setup since this is a new user
+      router.replace('/(home)/profile-information');
       
     } catch (error: any) {
             

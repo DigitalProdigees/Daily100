@@ -1,7 +1,6 @@
 import BackButtonWithText from '@/components/BackButtonWithText';
 import CenteredTitle from '@/components/CenteredTitle';
 import NextButton from '@/components/NextButton';
-import { StorageService } from '@/utils/storage';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -32,21 +31,7 @@ export default function AddMotivationScreen() {
     setSelectedCategory(categoryId);
   };
 
-  const handleUploadDreams = async () => {
-    if (selectedCategory) {
-      // Find the selected category data
-      const selectedCategoryData = motivationCategories.find(cat => cat.id === selectedCategory);
-      
-      if (selectedCategoryData) {
-        // Save the motivation data to storage
-        await StorageService.saveMotivationData({
-          id: selectedCategoryData.id,
-          title: selectedCategoryData.title,
-          image: selectedCategoryData.image
-        });
-      }
-    }
-    
+  const handleUploadDreams = () => {
     // Navigate to upload dreams screen
     router.push('/(home)/upload-dreams');
   };

@@ -1,40 +1,11 @@
 import Drawer from '@/components/Drawer';
-import { StorageService } from '@/utils/storage';
-import { router, useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [motivationData, setMotivationData] = useState<{ id: string; title: string; image: any } | null>(null);
-
-  // Default motivation data fallback
-  const defaultMotivationData = {
-    id: 'wealth',
-    title: 'Wealth',
-    image: require('@/assets/images/2.png')
-  };
-
-  useEffect(() => {
-    loadMotivationData();
-  }, []);
-
-  // Reload motivation data when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      loadMotivationData();
-    }, [])
-  );
-
-  const loadMotivationData = async () => {
-    try {
-      const data = await StorageService.getMotivationData();
-      setMotivationData(data);
-    } catch (error) {
-      console.error('Error loading motivation data:', error);
-    }
-  };
 
   const handleMenuPress = () => {
     setDrawerVisible(true);
@@ -75,11 +46,11 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Your Goals</Text>
           <TouchableOpacity style={styles.goalCard}>
             <Image
-              source={motivationData?.image || defaultMotivationData.image}
+              source={require('@/assets/images/2.png')}
               style={styles.goalCardBackground}
             />
             <View style={styles.goalCardOverlay}>
-              <Text style={styles.goalCategory}>{motivationData?.title || defaultMotivationData.title}</Text>
+              <Text style={styles.goalCategory}>Wealth</Text>
               <View style={styles.progressContainer}>
                 <View style={styles.progressBarContainer}>
                   <View style={styles.progressBar}>

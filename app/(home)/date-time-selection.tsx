@@ -118,7 +118,7 @@ export default function DateTimeSelectionScreen() {
       console.log('Selected Date:', selectedDate.toDateString());
       console.log('Selected Time:', selectedTime);
       // Navigate to payment details screen
-      router.push('/(home)/payment-details');
+      router.push('/payment-details');
     }
   };
 

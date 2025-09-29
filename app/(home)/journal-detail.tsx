@@ -3,7 +3,6 @@ import JournalStorage, { JournalEntry, MediaItem } from '@/utils/journalStorage'
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
     Dimensions,
     Image,
     SafeAreaView,
@@ -62,17 +61,12 @@ export default function JournalDetailScreen() {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = async () => {
-    try {
-      setShowDeleteModal(false);
-      // Delete the journal from storage (now async)
-      await JournalStorage.getInstance().deleteJournal(journalData.id);
-      console.log('Journal deleted:', journalData.id);
-      router.push('/(home)/journal');
-    } catch (error) {
-      console.error('Error deleting journal:', error);
-      Alert.alert('Error', 'Failed to delete journal. Please try again.');
-    }
+  const handleConfirmDelete = () => {
+    setShowDeleteModal(false);
+    // Delete the journal from storage
+    JournalStorage.getInstance().deleteJournal(journalData.id);
+    console.log('Journal deleted:', journalData.id);
+    router.push('/(home)/journal');
   };
 
   const handleCancelDelete = () => {
@@ -145,7 +139,7 @@ export default function JournalDetailScreen() {
         
         {/* Journal Description */}
         <Text style={styles.journalDescription}>
-          {journalData.description}
+          {journalData.content || journalData.description}
         </Text>
 
         {/* Attachments Section */}

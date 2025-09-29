@@ -2,12 +2,12 @@ import BackButtonWithText from '@/components/BackButtonWithText';
 import { router } from 'expo-router';
 import React from 'react';
 import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,23 +16,22 @@ interface Coach {
   name: string;
   field: string;
   backgroundColor: string;
-  image: any;
 }
 
 const coaches: Coach[] = [
-  { id: '1', name: 'Mary Linton', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a1.png') },
-  { id: '2', name: 'James John', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a2.png') },
-  { id: '3', name: 'Kyle Jeans', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a3.png') },
-  { id: '4', name: 'Bane Smith', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a4.png') },
-  { id: '5', name: 'Robert Patson', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a5.png') },
-  { id: '6', name: 'Carl Bowman', field: 'Coach field', backgroundColor: '', image: require('@/assets/images/a6.png') },
+  { id: '1', name: 'Mary Linton', field: 'Coach field', backgroundColor: '' },
+  { id: '2', name: 'James John', field: 'Coach field', backgroundColor: '' },
+  { id: '3', name: 'Kyle Jeans', field: 'Coach field', backgroundColor: '' },
+  { id: '4', name: 'Bane Smith', field: 'Coach field', backgroundColor: '' },
+  { id: '5', name: 'Robert Patson', field: 'Coach field', backgroundColor: '' },
+  { id: '6', name: 'Carl Bowman', field: 'Coach field', backgroundColor: '' },
 ];
 
 export default function CoachSelectionScreen() {
   const handleCoachSelect = (coach: Coach) => {
     console.log('Selected coach:', coach);
     // Navigate to date & time selection screen
-    router.push('/(home)/date-time-selection');
+    router.push('/date-time-selection');
   };
 
   const renderCoachCard = ({ item }: { item: Coach }) => (
@@ -43,9 +42,9 @@ export default function CoachSelectionScreen() {
     >
       <View style={styles.profileImageContainer}>
         <Image
-          source={item.image}
+          source={require('@/assets/images/ellipse.png')}
           style={styles.profileImage}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       </View>
       <Text style={styles.coachName}>{item.name}</Text>
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    tintColor:'#D67685'
   },
   coachName: {
     fontSize: 16,
